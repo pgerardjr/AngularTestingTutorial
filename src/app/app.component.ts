@@ -1,18 +1,6 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Hero} from './hero';
-
-const HEROES: Hero[] = [
-  { id: 11, name: 'Mr. Muscle Neck'},
-  { id: 12, name: 'Narco Escobar'},
-  { id: 13, name: 'Ms. Tickle Tyrant'},
-  { id: 14, name: 'Lil Lit Life'},
-  { id: 15, name: 'Dusty Neck'},
-  { id: 16, name: 'The GapTooth Goon'},
-  { id: 17, name: 'The Dry Lip Licker'},
-  { id: 18, name: 'World\'s Greatest Dad '},
-  { id: 19, name: 'The Cross-Eyed Crusader'},
-  { id: 20, name: 'Jeff'},
-];
+import {HeroService} from './hero.service';
 
 @Component({
   selector: 'my-app',
@@ -20,8 +8,8 @@ const HEROES: Hero[] = [
     <h1>{{title}}</h1>
     <h2>My Heroes</h2>
     <ul class="heroes">
-      <li *ngFor="let hero of heroes" 
-          (click)="onSelect(hero)" 
+      <li *ngFor="let hero of heroes"
+          (click)="onSelect(hero)"
           [class.selected]="hero === selectedHero">
         <!-- each hero goes here -->
         <span class="badge">{{hero.id}}</span> {{hero.name}}
@@ -83,17 +71,28 @@ const HEROES: Hero[] = [
       margin-right: .8em;
       border-radius: 4px 0 0 4px;
     }
-  `]
+  `],
+  providers: [HeroService]
 })
 
-export class AppComponent  {
+export class AppComponent implements OnInit {
   title = 'Tour of Heroes';
-  heroes = HEROES;
+  heroes: Hero[];
   selectedHero: Hero;
 
+  constructor(private heroService: HeroService) {}
+
+  /* Angular LifeCycle Hooks */
+  // Initialize Heroes array
+  ngOnInit(): void {
+    this.getHeroes();
+  }
+
+  // Class Functions
+  getHeroes(): void {
+    this.heroService.getHeroes().then(heroes => this.heroes = heroes);
+  }
   onSelect(hero: Hero): void {
     this.selectedHero = hero;
   }
 }
-
-
